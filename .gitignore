@@ -31,6 +31,9 @@ yarn-error.log*
 # env files
 .env*.local
 
+# local PGlite database (never commit)
+/data/pgdata/
+
 # vercel
 .vercel
 

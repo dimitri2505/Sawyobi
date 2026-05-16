@@ -1,58 +1,121 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-datatype), ui-sans-serif, system-ui, sans-serif;
-  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --font-sans:
+    "BPG Nino Mtavruli", "Sylfaen", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
 }
 
-.dark {
+:root {
   --radius: 0.625rem;
-  --background: #6366f1;
-  --foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --ring: oklch(0.556 0 0);
+  --background: #f6f7fb;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --muted: #eef0f6;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  --ring: #6366f1;
+  --primary: #4f46e5;
+  --primary-foreground: #ffffff;
+  --accent: #ede9fe;
+  --accent-foreground: #4338ca;
+  --destructive: #dc2626;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   html {
     overscroll-behavior: none;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family:
-      var(--font-datatype),
+      "BPG Nino Mtavruli",
+      "Sylfaen",
       -apple-system,
       BlinkMacSystemFont,
       "Segoe UI",
       sans-serif;
-    overscroll-behavior: none;
+  }
+  table {
+    @apply w-full text-sm;
+  }
+  th {
+    @apply text-left font-medium text-muted-foreground;
+  }
+  th,
+  td {
+    @apply border-b border-border px-3 py-2 align-top;
+  }
+  tr:last-child td {
+    @apply border-b-0;
+  }
+  input,
+  select,
+  textarea {
+    @apply rounded-md border border-border bg-card px-3 py-2 text-sm outline-none transition focus:border-ring focus:ring-2 focus:ring-ring/30;
+  }
+  button {
+    @apply cursor-pointer;
+  }
+  label {
+    @apply text-sm font-medium text-foreground;
   }
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition hover:bg-muted;
+}
+.btn-destructive {
+  @apply inline-flex items-center justify-center gap-2 rounded-md border border-transparent bg-destructive px-4 py-2 text-sm font-medium text-white transition hover:opacity-90;
 }
 
-.animate-marquee {
-  animation: marquee 30s linear infinite;
+.card {
+  @apply rounded-xl border border-border bg-card p-5 shadow-sm;
+}
+.kpi {
+  @apply rounded-xl border border-border bg-card p-5 shadow-sm;
+}
+.kpi-label {
+  @apply text-xs font-medium tracking-wide text-muted-foreground uppercase;
+}
+.kpi-value {
+  @apply mt-2 text-2xl font-semibold text-foreground;
+}
+.badge {
+  @apply inline-flex items-center rounded-full bg-accent px-2.5 py-0.5 text-xs font-medium text-accent-foreground;
+}
+.badge-warn {
+  @apply inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-900;
+}
+.badge-danger {
+  @apply inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-900;
+}
+.badge-ok {
+  @apply inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-900;
 }
