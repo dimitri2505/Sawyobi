@@ -147,6 +147,8 @@ export const purchaseItems = pgTable(
     materialId: integer("material_id")
       .notNull()
       .references(() => materials.id),
+    category: text("category"),
+    project: text("project"),
     quantity: numeric("quantity", { precision: 16, scale: 4 }).notNull(),
     unitPrice: numeric("unit_price", { precision: 14, scale: 4 })
       .notNull()
@@ -186,6 +188,8 @@ export const issueItems = pgTable(
     materialId: integer("material_id")
       .notNull()
       .references(() => materials.id),
+    project: text("project"),
+    category: text("category"),
     quantity: numeric("quantity", { precision: 16, scale: 4 }).notNull(),
   },
   (t) => [

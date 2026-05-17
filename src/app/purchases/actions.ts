@@ -9,6 +9,8 @@ import { purchases, purchaseItems } from "@/db/schema";
 import { getActiveProject } from "@/db/queries/project";
 
 const ItemSchema = z.object({
+  project: z.string().trim().nullable().optional(),
+  category: z.string().trim().nullable().optional(),
   materialId: z.coerce.number().int().positive(),
   quantity: z.coerce.number().positive(),
   unitPrice: z.coerce.number().min(0).default(0),
@@ -65,6 +67,8 @@ export async function createPurchase(formData: FormData) {
   await db.insert(purchaseItems).values(
     items.map((it) => ({
       purchaseId: purchase.id,
+      project: it.project || null,
+      category: it.category || null,
       materialId: it.materialId,
       quantity: String(it.quantity),
       unitPrice: String(it.unitPrice),

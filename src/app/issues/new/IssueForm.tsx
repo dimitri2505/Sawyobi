@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import { createIssue } from "../actions";
+import { PURCHASE_CATEGORIES, PURCHASE_PROJECTS } from "@/lib/categories";
 
 export interface MaterialOption {
   id: number;
@@ -21,6 +22,8 @@ export interface SegmentOption {
 
 interface Line {
   key: string;
+  project: string;
+  category: string;
   materialId: number | "";
   quantity: string;
 }
@@ -28,6 +31,8 @@ interface Line {
 function newLine(): Line {
   return {
     key: Math.random().toString(36).slice(2),
+    project: "",
+    category: "",
     materialId: "",
     quantity: "",
   };
@@ -75,6 +80,8 @@ export function IssueForm({
       "items",
       JSON.stringify(
         valid.map((l) => ({
+          project: l.project || null,
+          category: l.category || null,
           materialId: Number(l.materialId),
           quantity: Number(l.quantity),
         })),
@@ -144,7 +151,9 @@ export function IssueForm({
           <table>
             <thead>
               <tr>
-                <th className="w-1/2">მასალა</th>
+                <th className="w-40">პროექტი</th>
+                <th className="w-40">კატეგორია</th>
+                <th>მასალა</th>
                 <th>ერთეული</th>
                 <th className="text-right">საწყობში</th>
                 <th className="text-right">გასატანი რაოდ.</th>
@@ -156,6 +165,30 @@ export function IssueForm({
                 const mat = materials.find((m) => m.id === line.materialId);
                 return (
                   <tr key={line.key}>
+                    <td>
+                      <select
+                        value={line.project}
+                        onChange={(e) => updateLine(idx, { project: e.target.value })}
+                        className="w-full"
+                      >
+                        <option value="">— პროექტი —</option>
+                        {PURCHASE_PROJECTS.map((p) => (
+                          <option key={p} value={p}>{p}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <select
+                        value={line.category}
+                        onChange={(e) => updateLine(idx, { category: e.target.value })}
+                        className="w-full"
+                      >
+                        <option value="">— კატეგორია —</option>
+                        {PURCHASE_CATEGORIES.map((c) => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                    </td>
                     <td>
                       <select
                         value={line.materialId}

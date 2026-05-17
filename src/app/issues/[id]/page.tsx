@@ -28,6 +28,8 @@ export default async function IssueDetailPage({
   const lines = await db
     .select({
       id: issueItems.id,
+      project: issueItems.project,
+      category: issueItems.category,
       quantity: issueItems.quantity,
       materialName: materials.name,
       materialUnit: materials.unit,
@@ -83,6 +85,8 @@ export default async function IssueDetailPage({
         <table>
           <thead>
             <tr>
+              <th>პროექტი</th>
+              <th>კატეგორია</th>
               <th>მასალა</th>
               <th>ერთეული</th>
               <th className="text-right">რაოდენობა</th>
@@ -91,6 +95,8 @@ export default async function IssueDetailPage({
           <tbody>
             {lines.map((l) => (
               <tr key={l.id}>
+                <td className="text-muted-foreground">{l.project ?? "—"}</td>
+                <td className="text-muted-foreground">{l.category ?? "—"}</td>
                 <td className="font-medium">{l.materialName ?? "—"}</td>
                 <td>{l.materialUnit ?? "—"}</td>
                 <td className="text-right tabular-nums">

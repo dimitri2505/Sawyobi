@@ -20,7 +20,7 @@ import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { formatDate, formatMoney, formatNumber } from "@/lib/format";
 import { getActiveProject } from "@/db/queries/project";
-import { getStockRows } from "@/db/queries/stock";
+import { getLowStockWarnings, getPriceChanges } from "@/db/queries/stock";
 
 export const dynamic = "force-dynamic";
 
@@ -76,10 +76,10 @@ export default async function DashboardPage() {
     .select({ c: sql<number>`COUNT(*)::int`.as("c") })
     .from(materialsTable);
 
-  const stock = await getStockRows();
-  const lowStock = stock
-    .filter((s) => Number(s.remaining) < 0)
-    .slice(0, 5);
+  const [lowStock, priceChanges] = await Promise.all([
+    getLowStockWarnings(),
+    getPriceChanges(),
+  ]);
 
   const recentPurchases = await db
     .select({
@@ -146,18 +146,69 @@ export default async function DashboardPage() {
 
       {lowStock.length > 0 && (
         <div className="card mb-6 border-destructive/40 bg-red-50">
-          <div className="mb-2 text-sm font-semibold text-destructive">
-            ⚠ ნაშთი მინუსშია
+          <div className="mb-3 text-sm font-semibold text-destructive">
+            ⚠ დაბალი ნაშთი ({lowStock.length})
           </div>
-          <ul className="space-y-1 text-sm">
+          <ul className="divide-y divide-red-100">
             {lowStock.map((s) => (
-              <li key={s.material_id} className="flex justify-between">
+              <li key={s.material_id} className="flex items-center justify-between py-1.5 text-sm">
                 <span>{s.name}</span>
-                <span className="tabular-nums text-destructive">
-                  {formatNumber(s.remaining, true)} {s.unit}
-                </span>
+                <div className="flex items-center gap-3">
+                  {Number(s.planned) > 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      გეგმა: {formatNumber(s.planned)}
+                    </span>
+                  )}
+                  <span
+                    className={
+                      s.severity === "danger"
+                        ? "font-semibold tabular-nums text-destructive"
+                        : "font-semibold tabular-nums text-yellow-700"
+                    }
+                  >
+                    {formatNumber(s.remaining, true)} {s.unit}
+                  </span>
+                  {s.severity === "danger" ? (
+                    <span className="badge-danger">კრიტიკული</span>
+                  ) : (
+                    <span className="badge-warn">დაბალი</span>
+                  )}
+                </div>
               </li>
             ))}
+          </ul>
+        </div>
+      )}
+
+      {priceChanges.length > 0 && (
+        <div className="card mb-6 border-yellow-300 bg-yellow-50">
+          <div className="mb-3 text-sm font-semibold text-yellow-800">
+            ↕ ფასის ცვლილება ბოლო შეძენებში ({priceChanges.length})
+          </div>
+          <ul className="divide-y divide-yellow-100">
+            {priceChanges.map((r) => {
+              const pct = Number(r.pct_change);
+              const up = pct > 0;
+              return (
+                <li key={r.material_id} className="flex items-center justify-between py-1.5 text-sm">
+                  <span>{r.name}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {formatMoney(r.prev_price)} → {formatMoney(r.latest_price)}
+                    </span>
+                    <span
+                      className={
+                        up
+                          ? "font-semibold tabular-nums text-destructive"
+                          : "font-semibold tabular-nums text-emerald-700"
+                      }
+                    >
+                      {up ? "▲" : "▼"} {Math.abs(pct)}%
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

@@ -27,6 +27,8 @@ export default async function PurchaseDetailPage({
   const lines = await db
     .select({
       id: purchaseItems.id,
+      project: purchaseItems.project,
+      category: purchaseItems.category,
       quantity: purchaseItems.quantity,
       unitPrice: purchaseItems.unitPrice,
       materialName: materials.name,
@@ -86,6 +88,8 @@ export default async function PurchaseDetailPage({
         <table>
           <thead>
             <tr>
+              <th>პროექტი</th>
+              <th>კატეგორია</th>
               <th>მასალა</th>
               <th>ერთეული</th>
               <th className="text-right">რაოდენობა</th>
@@ -96,6 +100,8 @@ export default async function PurchaseDetailPage({
           <tbody>
             {lines.map((l) => (
               <tr key={l.id}>
+                <td className="text-muted-foreground">{l.project ?? "—"}</td>
+                <td className="text-muted-foreground">{l.category ?? "—"}</td>
                 <td className="font-medium">{l.materialName ?? "—"}</td>
                 <td>{l.materialUnit ?? "—"}</td>
                 <td className="text-right tabular-nums">
@@ -110,7 +116,7 @@ export default async function PurchaseDetailPage({
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={4} className="text-right font-medium">
+              <td colSpan={6} className="text-right font-medium">
                 სულ:
               </td>
               <td className="text-right font-semibold tabular-nums">

@@ -15,7 +15,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --font-sans:
-    "BPG Nino Mtavruli", "Sylfaen", ui-sans-serif, system-ui, sans-serif;
+    var(--font-georgian), "BPG Nino Mtavruli", "Sylfaen", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -49,6 +49,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family:
+      var(--font-georgian),
       "BPG Nino Mtavruli",
       "Sylfaen",
       -apple-system,
