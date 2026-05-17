@@ -15,7 +15,10 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci
-      - run: npm run build
+      - name: Build
+        env:
+          DATABASE_URL: pglite://./data/pgdata
+        run: npm run build
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
